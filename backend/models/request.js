@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 // Define schema for ride requests
@@ -20,13 +20,15 @@ const rideRequestSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "passenger",
   },
-  //   timestamp: {
-  //     type: Date,
-  //     default: Date.now
-  //   }
+  // Optional timestamp field if needed
+  // timestamp: {
+  //   type: Date,
+  //   default: Date.now,
+  // }
 });
 
 // Create RideRequest model
 const RideRequest = mongoose.model("RideRequest", rideRequestSchema);
 
-module.exports = RideRequest;
+// Export the model
+export default RideRequest;

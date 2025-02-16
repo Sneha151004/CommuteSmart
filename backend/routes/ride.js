@@ -1,29 +1,10 @@
-const express = require("express");
+import express from "express";
+import Driver from "../models/driver.js";
+import RideRequest from "../models/request.js";
+import fetchUser from "../middleware/fetchUser.js";
+import Passenger from "../models/passenger.js";
+
 const router = express.Router();
-const Driver = require("../models/driver");
-const RideRequest = require("../models/request");
-const fetchUser = require("../middleware/fetchUser");
-const Passenger = require("../models/passenger");
-
-// // Fetch available drivers based on source and destination
-// router.get("/availabledrivers", async (req, res) => {
-//   const { source, destination } = req.body;
-//   try {
-//     // Create a new passenger instance
-//     const newPassenger = new Passenger({ source, destination });
-//     // Save the new passenger instance to the database
-//     await newPassenger.save();
-
-//     // Find drivers with matching source and destination
-//     const availableDrivers = await Driver.find({ source, destination });
-
-//     // Send response including both available drivers and the new passenger
-//     res.json({ availableDrivers, newPassenger });
-//   } catch (error) {
-//     console.error("Error fetching available drivers:", error);
-//     res.status(500).json({ error: "Server Error" });
-//   }
-// });
 
 // Route to fetch available drivers based on source and destination
 router.get("/availabledrivers", async (req, res) => {
@@ -82,9 +63,7 @@ router.post("/giveride", async (req, res) => {
     // Save the new driver instance to the database
     await newDriver.save();
     // Return the driver ID along with the success message
-    res
-      .status(201)
-      .json({ message: "Ride offered successfully", driverId: newDriver._id });
+    res.status(201).json({ message: "Ride offered successfully", driverId: newDriver._id });
   } catch (error) {
     console.error("Error offering ride:", error);
     res.status(500).json({ error: "Server Error" });
@@ -103,6 +82,7 @@ router.get("/riderequests/:driverId", async (req, res) => {
   }
 });
 
+// Delete driver
 router.delete("/driver/:driverId", fetchUser, async (req, res) => {
   try {
     let driver = await Driver.findById(req.params.driverId);
@@ -117,6 +97,7 @@ router.delete("/driver/:driverId", fetchUser, async (req, res) => {
   }
 });
 
+// Delete passenger
 router.delete("/passenger/:passengerId", fetchUser, async (req, res) => {
   try {
     let passenger = await Driver.findById(req.params.passengerId);
@@ -131,13 +112,14 @@ router.delete("/passenger/:passengerId", fetchUser, async (req, res) => {
   }
 });
 
+// Delete ride request
 router.delete("/request/:id", fetchUser, async (req, res) => {
   try {
     let request = await RideRequest.findById(req.params.id);
     if (!request) {
       return res.status(404).send("NOT FOUND");
     }
-    request = await Request.findByIdAndDelete(req.params.id);
+    request = await RideRequest.findByIdAndDelete(req.params.id);
     res.json({ Success: "Request has been deleted" });
   } catch (error) {
     console.error(error.message);
@@ -145,4 +127,4 @@ router.delete("/request/:id", fetchUser, async (req, res) => {
   }
 });
 
-module.exports = router;
+export  default  router;

@@ -1,10 +1,11 @@
-const express = require("express");
-const fetchuser = require("../middleware/fetchUser");
-const router = express.Router();
-const Campaign = require("../models/campaign");
-const { body, validationResult } = require("express-validator");
+import express from 'express'; // Import express as ES module
+import fetchuser from '../middleware/fetchUser.js'; // Import fetchuser middleware
+import Campaign from '../models/campaign.js'; // Import Campaign model
+import { body, validationResult } from 'express-validator'; // Import body and validationResult
 
-// get all Campaigns: get
+const router = express.Router();
+
+// GET all campaigns
 router.get("/fetchallcampaigns", async (req, res) => {
   try {
     const campaigns = await Campaign.find({});
@@ -15,18 +16,14 @@ router.get("/fetchallcampaigns", async (req, res) => {
   }
 });
 
-// add a campaign: post
+// Add a campaign
 router.post(
   "/addcampaign",
   fetchuser,
   [
     body("title", "Enter a valid title").isLength({ min: 5 }),
-    body("description", "Description must be atleast 10 characters").isLength({
-      min: 10,
-    }),
-    body("address", "Description must be atleast 10 characters").isLength({
-      min: 10,
-    }),
+    body("description", "Description must be atleast 10 characters").isLength({ min: 10 }),
+    body("address", "Description must be atleast 10 characters").isLength({ min: 10 }),
   ],
   async (req, res) => {
     try {
@@ -35,6 +32,7 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
+
       const campaign = new Campaign({
         title,
         description,
@@ -42,6 +40,7 @@ router.post(
         address,
         user: req.user.id,
       });
+
       const savedCampaign = await campaign.save();
       res.json(savedCampaign);
     } catch (error) {
@@ -51,30 +50,20 @@ router.post(
   }
 );
 
-// ROUTE 3: Update an existing campaign
+// Update an existing campaign
 router.put("/updatecampaign/:id", fetchuser, async (req, res) => {
   const { title, description, date, address } = req.body;
   try {
     const newCampaign = {};
-    if (title) {
-      newCampaign.title = title;
-    }
-    if (description) {
-      newCampaign.description = description;
-    }
-    if (date) {
-      newCampaign.date = date;
-    }
-    if (address) {
-      newCampaign.address = address;
-    }
+    if (title) newCampaign.title = title;
+    if (description) newCampaign.description = description;
+    if (date) newCampaign.date = date;
+    if (address) newCampaign.address = address;
+
     let campaign = await Campaign.findById(req.params.id);
-    if (!campaign) {
-      return res.status(404).send("NOT FOUND");
-    }
-    if (campaign.user.toString() !== req.user.id) {
-      return res.status(401).send("Not Allowed");
-    }
+    if (!campaign) return res.status(404).send("NOT FOUND");
+    if (campaign.user.toString() !== req.user.id) return res.status(401).send("Not Allowed");
+
     campaign = await Campaign.findByIdAndUpdate(
       req.params.id,
       { $set: newCampaign },
@@ -87,45 +76,38 @@ router.put("/updatecampaign/:id", fetchuser, async (req, res) => {
   }
 });
 
-// ROUTE 4: Delete an existing Campaign
+// Delete a campaign
 router.delete("/deletecampaign/:id", fetchuser, async (req, res) => {
   try {
     let campaign = await Campaign.findById(req.params.id);
-    if (!campaign) {
-      return res.status(404).send("NOT FOUND");
-    }
-    if (campaign.user.toString() !== req.user.id) {
-      return res.status(401).send("Not Allowed");
-    }
+    if (!campaign) return res.status(404).send("NOT FOUND");
+    if (campaign.user.toString() !== req.user.id) return res.status(401).send("Not Allowed");
+
     campaign = await Campaign.findByIdAndDelete(req.params.id);
-    res.json({ Success: "Campaign has been deleted", campaign: campaign });
+    res.json({ Success: "Campaign has been deleted", campaign });
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Internal Server Error");
   }
 });
 
-// update: add and remove the supporter
+// Add/remove supporter
 router.put("/addsupporter/:id", fetchuser, async (req, res) => {
   try {
-    // Find the campaign to be updated
     let campaign = await Campaign.findById(req.params.id);
-    if (!campaign) {
-      return res.status(404).send("Campaign not found");
-    }
-    // Check if the user is already a supporter
+    if (!campaign) return res.status(404).send("Campaign not found");
+
     const userId = req.user.id;
     if (campaign.supporters.includes(userId)) {
       const index = campaign.supporters.indexOf(userId);
       if (index !== -1) {
-        campaign.supporters.splice(index, 1); // Remove the user from the supporters array
+        campaign.supporters.splice(index, 1); // Remove user
         const updatedCampaign = await campaign.save();
         return res.json(updatedCampaign);
       }
     }
-    // Add the user to the supporters array
-    campaign.supporters.push(userId);
-    // Save the updated campaign
+
+    campaign.supporters.push(userId); // Add user
     const updatedCampaign = await campaign.save();
     res.json(updatedCampaign);
   } catch (error) {
@@ -133,4 +115,4 @@ router.put("/addsupporter/:id", fetchuser, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router; // Export router using ES module syntax

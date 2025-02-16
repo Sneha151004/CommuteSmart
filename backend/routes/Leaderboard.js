@@ -1,9 +1,11 @@
-const express = require("express");
-const fetchuser = require("../middleware/fetchUser");
-const router = express.Router();
-const Leaderboard = require("../models/leaderboard");
+import express from 'express';
+import fetchuser from '../middleware/fetchUser.js';
+import { Leaderboard } from '../models/leaderboard.js'; // Using named import
 
-router.post("/update-leaderboard", fetchuser, async (req, res) => {
+const router = express.Router();
+
+// Route to update the leaderboard
+router.post('/update-leaderboard', fetchuser, async (req, res) => {
   const { Sname, coins } = req.body;
   try {
     await Leaderboard.updateOne(
@@ -20,19 +22,19 @@ router.post("/update-leaderboard", fetchuser, async (req, res) => {
     res.status(200).json(leaderboardData);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
-// Route to fetch full leaderboard data
-router.get("", async (req, res) => {
+// Route to fetch the full leaderboard data
+router.get('/', async (req, res) => {
   try {
     const leaderboardData = await Leaderboard.find().sort({ coins: -1 });
     res.status(200).json(leaderboardData);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
-module.exports = router;
+export default router;

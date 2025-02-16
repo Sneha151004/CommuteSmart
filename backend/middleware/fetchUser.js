@@ -1,5 +1,8 @@
-const jwt = require("jsonwebtoken");
+import jwt from 'jsonwebtoken'; // Importing jwt using ES module syntax
+
 const JWT_SECRET = process.env.JWT_SECRET;
+console.log(JWT_SECRET);
+
 // next() isliye hum krte hai taaki next middleware run ho
 const fetchuser = (req, res, next) => {
   // get the user from the jwt token and add id to req object
@@ -17,4 +20,4 @@ const fetchuser = (req, res, next) => {
   }
 };
 
-module.exports = fetchuser;
+export default fetchuser;  

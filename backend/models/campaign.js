@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose'; // Import mongoose as an ES module
 const { Schema } = mongoose;
 
 const CampaignSchema = new Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: 'user',
   },
   title: {
     type: String,
@@ -25,9 +25,10 @@ const CampaignSchema = new Schema({
   supporters: {
     type: [mongoose.Schema.Types.ObjectId],
     default: [],
-    ref: "user",
+    ref: 'user',
   },
 });
 
-const Campaign = mongoose.model("campaign", CampaignSchema);
-module.exports = Campaign;
+const Campaign = mongoose.model('campaign', CampaignSchema);
+
+export default Campaign; // Export Campaign model using ES module syntax

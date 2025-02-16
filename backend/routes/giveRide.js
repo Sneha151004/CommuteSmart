@@ -1,8 +1,9 @@
-const express = require("express");
-const fetchuser = require("../middleware/fetchUser");
+import express from "express";
+import fetchuser from "../middleware/fetchUser.js";
+import { body, validationResult } from "express-validator";
+import Driver from "../models/driver.js";
+
 const router = express.Router();
-const { body, validationResult } = require("express-validator");
-const Driver = require("../models/driver");
 
 // Route to create a new driver
 router.post(
@@ -73,7 +74,7 @@ router.get("/details/:id", fetchuser, async (req, res) => {
   }
 });
 
-// delete the driver when he gets out of the page
+// Delete the driver when they get out of the page
 router.delete("/:id", fetchuser, async (req, res) => {
   try {
     const deletedDriver = await Driver.findOneAndDelete(req.params.id);
@@ -87,4 +88,4 @@ router.delete("/:id", fetchuser, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

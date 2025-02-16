@@ -1,22 +1,23 @@
-const express = require("express");
-const fetchuser = require("../middleware/fetchUser");
-const router = express.Router();
-const Comment = require("../models/comment");
-const { body, validationResult } = require("express-validator");
+import express from 'express';
+import fetchuser from '../middleware/fetchUser.js'; // Import fetchUser as an ES module
+import Comment from '../models/comment.js'; // Import Comment model as an ES module
+import { body, validationResult } from 'express-validator';
 
-// get all comments
-router.get("/fetchallcomments", async (req, res) => {
+const router = express.Router();
+
+// Get all comments: GET
+router.get('/fetchallcomments', async (req, res) => {
   try {
-    const comment = await Comment.find({});
-    res.json(comment);
+    const comments = await Comment.find({});
+    res.json(comments);
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send('Internal Server Error');
   }
 });
 
-// add a campaign: post
-router.post("/addcomment", fetchuser, async (req, res) => {
+// Add a comment: POST
+router.post('/addcomment', fetchuser, async (req, res) => {
   try {
     const { content, date, author } = req.body;
     const comment = new Comment({
@@ -29,26 +30,26 @@ router.post("/addcomment", fetchuser, async (req, res) => {
     res.json(savedComment);
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send('Internal Server Error');
   }
 });
 
-// delete the comment
-router.delete("/deletecomment/:id", fetchuser, async (req, res) => {
+// Delete a comment: DELETE
+router.delete('/deletecomment/:id', fetchuser, async (req, res) => {
   try {
     let comment = await Comment.findById(req.params.id);
     if (!comment) {
-      return res.status(404).send("NOT FOUND");
+      return res.status(404).send('NOT FOUND');
     }
     if (comment.user.toString() !== req.user.id) {
-      return res.status(401).send("Not Allowed");
+      return res.status(401).send('Not Allowed');
     }
     comment = await Comment.findByIdAndDelete(req.params.id);
-    res.json({ Success: "Comment has been deleted", comment: comment });
+    res.json({ Success: 'Comment has been deleted', comment: comment });
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send('Internal Server Error');
   }
 });
 
-module.exports = router;
+export default router; // Export router as an ES module

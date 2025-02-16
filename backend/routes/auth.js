@@ -1,59 +1,72 @@
-const express = require("express");
+import express from 'express';  // Use ES module import
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { body, validationResult } from 'express-validator';
+import User from '../models/user.js';
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
+
 const router = express.Router();
-const User = require("../models/user");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const fetchuser = require("../middleware/fetchUser");
-const { body, validationResult } = require("express-validator");
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// signup route: POST
+// Signup route: POST
 router.post(
   "/signup",
   [
-    body("email", "Enter a valid Email").isEmail(),
-    // body("city", "Select a city").exists(),
-    body("name", "Enter a valid name").isLength({ min: 3 }),
-    body("password", "Enter a valid password").isLength({ min: 8 }),
+    body("email", "Enter a valid email").isEmail(),
+    body("name", "Enter a valid name with at least 3 characters").isLength({ min: 3 }),
+    body("password", "Password must be at least 8 characters long").isLength({ min: 8 }),
   ],
   async (req, res) => {
     let success = false;
-    // if there are error, return bad request and the error
     const errors = validationResult(req);
+
+    // If there are validation errors, respond with a 400 status and error details
     if (!errors.isEmpty()) {
       return res.status(400).json({ success, errors: errors.array() });
     }
+
     try {
-      // check whether the user with this email exists already
-      let user = await User.findOne({ email: req.body.email });
+      const { email, name, password } = req.body;
+
+      // Check if user already exists with the provided email
+      let user = await User.findOne({ email });
       if (user) {
-        return res.status(400).json({ success, error: "Email already exist!" });
-      } else {
-        const salt = await bcrypt.genSalt(10);
-        const secPass = await bcrypt.hash(req.body.password, salt);
-        user = await User.create({
-          name: req.body.name,
-          // city: req.body.city,
-          password: secPass,
-          email: req.body.email,
-        });
-        const data = {
-          user: {
-            id: user.id,
-            // name: user.name,
-            // city: user.city
-          },
-        };
-        success = true;
-        const authToken = jwt.sign(data, JWT_SECRET);
-        res.json({
-          authToken,
-          success,
-          name: user.name,
-          id: user.id,
-          // city: user.city,
-        });
+        return res.status(400).json({ success, error: "Email already exists!" });
       }
+
+      // Hash the password and create the new user
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      user = new User({
+        name,
+        email,
+        password: hashedPassword,
+      });
+
+      // Save the new user to the database
+      await user.save();
+
+      // Create the payload for JWT token
+      const data = {
+        user: {
+          id: user._id,
+        },
+      };
+
+      // Generate a JWT token
+      const authToken = jwt.sign(data, JWT_SECRET);
+
+      success = true;
+      res.json({
+        authToken,
+        success,
+        name: user.name,
+        id: user._id,
+      });
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Internal Server Error");
@@ -61,7 +74,7 @@ router.post(
   }
 );
 
-// login route: POST
+// Login route: POST
 router.post(
   "/login",
   [
@@ -71,9 +84,11 @@ router.post(
   async (req, res) => {
     let success = false;
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ success, errors: errors.array() });
     }
+
     const { email, password } = req.body;
     try {
       let user = await User.findOne({ email });
@@ -90,10 +105,10 @@ router.post(
             error: "Please try to login with correct credentials!",
           });
         }
+
         const data = {
           user: {
             id: user.id,
-            // name: user.name,
           },
         };
         const authToken = jwt.sign(data, JWT_SECRET);
@@ -103,7 +118,6 @@ router.post(
           success,
           name: user.name,
           id: user.id,
-          // city: user.city,
         });
       }
     } catch (error) {
@@ -113,4 +127,4 @@ router.post(
   }
 );
 
-module.exports = router;
+export default router;  // Use export default to enable ES module export

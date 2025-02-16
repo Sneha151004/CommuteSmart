@@ -1,22 +1,25 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const LeaderboardSchema = new Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
-  },
   Sname: {
     type: String,
     required: true,
   },
   coins: {
     type: Number,
+    required: true,
   },
   rank: {
     type: Number,
+    default: 0,
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
   },
 });
 
-const Leaderboard = mongoose.model("leaderboard", LeaderboardSchema);
-module.exports = Leaderboard;
+const Leaderboard = mongoose.model('Leaderboard', LeaderboardSchema);
+
+export { Leaderboard }; // Named export

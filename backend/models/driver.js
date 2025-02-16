@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const DriverSchema = new Schema({
@@ -14,11 +14,6 @@ const DriverSchema = new Schema({
     type: [mongoose.Schema.Types.ObjectId],
     ref: "request",
   },
-
-  // Dname: {
-  //   type: String,
-  //   required: true,
-  // },
   vehicle: {
     type: String,
     required: true,
@@ -28,45 +23,14 @@ const DriverSchema = new Schema({
     required: true,
   },
   source: {
-    // type: {
     type: String,
-    // enum: ["Point"],
     required: true,
-    // },
-    // coordinates: {
-    //   type: [Number],
-    //   required: true,
-    // },
   },
   destination: {
-    // type: {
     type: String,
-    // enum: ["Point"],
     required: true,
-    // },
-    // coordinates: {
-    //   type: [Number],
-    //   required: true,
-    // },
   },
-  // fuel: {
-  //   type: String,
-  //   required: true,
-  // },
-  // location: {
-  //   type: {
-  //     type: String,
-  //     // enum: ["Point"],
-  //     required: true,
-  //   },
-  // coordinates: {
-  //   type: [Number],
-  //   required: true,
-  // },
-  // },
 });
 
-// DriverSchema.index({ location: "2dsphere" });
-
 const Driver = mongoose.model("Driver", DriverSchema);
-module.exports = Driver;
+export default Driver;
