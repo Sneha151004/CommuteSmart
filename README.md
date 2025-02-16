@@ -1,7 +1,7 @@
-# CommuteGreen
+# CommuteSmart
 
 ## Problem Statement
-With increasing urbanization and environmental concerns, commuters face challenges such as traffic congestion, high carbon emissions, and limited parking availability. **CommuteGreen** aims to address these issues by providing a platform that helps users make eco-friendly commuting choices, track their carbon footprints, and find smart parking solutions.
+With increasing urbanization and environmental concerns, commuters face challenges such as traffic congestion, high carbon emissions, and limited parking availability. **CommuteSmart** aims to address these issues by providing a platform that helps users make eco-friendly commuting choices, track their carbon footprints, and find smart parking solutions.
 
 ## Features
 
@@ -74,4 +74,4 @@ With increasing urbanization and environmental concerns, commuters face challeng
 ```
 
 ## Summary
-The **CommuteGreen** project is designed to help users make informed and eco-friendly commuting choices while addressing common urban commuting challenges. It combines modern web technologies with a user-centric approach to provide valuable features like carbon footprint tracking and smart parking solutions.
+The **CommuteSmart** project is designed to help users make informed and eco-friendly commuting choices while addressing common urban commuting challenges. It combines modern web technologies with a user-centric approach to provide valuable features like carbon footprint tracking and smart parking solutions.
