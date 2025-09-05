@@ -16,7 +16,7 @@ const Carpooling = () => {
         <div className="lg:w-1/2 p-8 flex flex-col justify-center items-center">
           <div>
             <h2 className="text-4xl lg:text-6xl font-bold text-custom-green mb-4 lg:mb-8">
-              Car Pooling
+              Car Pooling  
             </h2>
             <h2 className="text-lg lg:text-4xl font-semibold text-green-700 mb-4 lg:mb-8">
               Earn, Connect and Contribute to Greener Society

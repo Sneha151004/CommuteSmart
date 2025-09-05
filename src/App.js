@@ -18,6 +18,8 @@ import Requests from "./pages/Requests";
 import CarbonFootprint from './pages/CarbonFootprint';
 import SmartParking from "./pages/SmartParking";
 import { Toaster } from "react-hot-toast";
+// TODO:
+import DriverDashboard from "./pages/DriverDashboard";
 
 // Custom component to control the visibility of Navbar and Footer
 function NavigationControl() {
@@ -46,6 +48,7 @@ function NavigationControl() {
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/carbon-footprint" element={<CarbonFootprint />} />
         <Route path="/smart-parking" element={<SmartParking />} />
+        <Route path="/driver/dashboard" element={<DriverDashboard />} />
       </Routes>
       {!hideNavbarAndFooter && <Footer />}
     </React.Fragment>
