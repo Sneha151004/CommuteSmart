@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "@react-google-maps/api": "^2.20.3",
     "concurrently": "^8.2.2",
     "firebase": "^10.10.0",

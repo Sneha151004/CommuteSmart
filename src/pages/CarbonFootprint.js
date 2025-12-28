@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaCar, FaBus, FaTrain, FaBicycle, FaWalking } from 'react-icons/fa';
+import { FaCar, FaBus, FaTrain, FaBicycle, FaWalking, FaRobot } from 'react-icons/fa';
+import { getCarbonFootprintAdvice } from '../utils/geminiAI';
 
 const CarbonFootprint = () => {
   const [transportData, setTransportData] = useState({
@@ -14,6 +15,8 @@ const CarbonFootprint = () => {
   const [totalEmissions, setTotalEmissions] = useState(0);
   const [monthlyStats, setMonthlyStats] = useState([]);
   const [badges, setBadges] = useState([]);
+  const [aiTips, setAiTips] = useState([]);
+  const [loadingAI, setLoadingAI] = useState(false);
 
   // CO2 emissions in kg per km
   const emissionFactors = {
@@ -27,7 +30,17 @@ const CarbonFootprint = () => {
   useEffect(() => {
     calculateTotalEmissions();
     checkBadges();
+    getAIAdvice();
   }, [transportData]);
+
+  const getAIAdvice = async () => {
+    if (totalEmissions > 0) {
+      setLoadingAI(true);
+      const tips = await getCarbonFootprintAdvice(transportData, totalEmissions);
+      setAiTips(tips.slice(0, 4));
+      setLoadingAI(false);
+    }
+  };
 
   const calculateTotalEmissions = () => {
     let total = 0;
@@ -164,15 +177,47 @@ const CarbonFootprint = () => {
         </div>
 
         {/* Tips Section */}
-        <div className="bg-blue-50 p-6 rounded-lg">
+        <div className="bg-blue-50 p-6 rounded-lg mb-6">
           <h2 className="text-2xl font-semibold mb-4">Eco-friendly Tips</h2>
-          <ul className="list-disc list-inside text-gray-700">
+          <ul className="list-disc list-inside text-gray-700 space-y-2">
             <li>Consider carpooling to reduce individual carbon emissions</li>
             <li>Use public transport for longer journeys when possible</li>
             <li>Try cycling or walking for short distances</li>
             <li>Maintain your vehicle regularly for optimal fuel efficiency</li>
           </ul>
         </div>
+
+        {/* AI Personalized Tips */}
+        {aiTips.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-lg"
+          >
+            <div className="flex items-center mb-4">
+              <FaRobot className="text-4xl mr-3" />
+              <h2 className="text-2xl font-bold">AI-Powered Personalized Tips</h2>
+            </div>
+            {loadingAI ? (
+              <p className="text-lg">Getting personalized recommendations...</p>
+            ) : (
+              <ul className="space-y-3">
+                {aiTips.map((tip, index) => (
+                  <motion.li
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex items-start"
+                  >
+                    <span className="text-2xl mr-3">💡</span>
+                    <p className="text-lg">{tip}</p>
+                  </motion.li>
+                ))}
+              </ul>
+            )}
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );
